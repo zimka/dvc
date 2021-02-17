@@ -50,7 +50,7 @@ install_requires = [
     "colorama>=0.3.9",
     "configobj>=5.0.6",
     "gitpython>3",
-    "dulwich>=0.20.14",
+    "dulwich>=0.20.19",
     "setuptools>=34.0.0",
     "nanotime>=0.5.2",
     "pyasn1>=0.4.1",
@@ -143,6 +143,7 @@ tests_requirements = [
     "rangehttpserver==1.2.0",
     "beautifulsoup4==4.4.0",
     "pylint==2.5.3",
+    "astroid<2.5",  # temporary required for pylint, see #5469
     "pylint-pytest>=0.3.0",
     "pylint-plugin-utils",
     "wget",
