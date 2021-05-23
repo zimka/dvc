@@ -1,5 +1,5 @@
 import logging
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import Executor, as_completed, Future
 from functools import partial, partialmethod
 from multiprocessing import cpu_count
 from typing import Any, ClassVar, Dict, FrozenSet, Optional
@@ -12,6 +12,31 @@ from dvc.utils.fs import makedirs, move
 from dvc.utils.http import open_url
 
 logger = logging.getLogger(__name__)
+
+
+class ThreadPoolExecutor(Executor):
+    """
+    Mock Thread executor to execute futures in the same thread
+    """
+
+    def __init__(self, *args, **kwargs):
+        self._shutdown = False
+
+    def submit(self, fn, *args, **kwargs):
+        #import pdb; pdb.set_trace()
+        if self._shutdown:
+            raise RuntimeError('cannot schedule new futures after shutdown')
+        f = Future()
+        try:
+            result = fn(*args, **kwargs)
+        except BaseException as e:
+            f.set_exception(e)
+        else:
+            f.set_result(result)
+        return f
+
+    def shutdown(self, wait=True):
+        self._shutdown = True
 
 
 class RemoteCmdError(DvcException):
